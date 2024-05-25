@@ -3,6 +3,7 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include <glad/gl.h>
 
 /******************************************************************************/
 /* Callbacks Fwd                                                              */
@@ -63,9 +64,19 @@ bool chk_win_create(Win* w, WinConfig* c) {
     }
     ++g_win_count;
 
+    w->state.uses_opengl = c->uses_opengl;
+
     glfwWindowHint(GLFW_RESIZABLE, c->resizable);
     glfwWindowHint(GLFW_DECORATED, c->bordered);
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    if (w->state.uses_opengl) {
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+    } else {
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    }
 
     GLFWmonitor* monitor = NULL;
     if (c->fullscreen) {
@@ -84,6 +95,19 @@ bool chk_win_create(Win* w, WinConfig* c) {
     if (!w->impl) {
         chk_warn_f("Win", "Failed to create the Win '%s'", c->caption);
         return false;
+    }
+
+    if (w->state.uses_opengl) {
+        glfwMakeContextCurrent(w->impl);
+        S32 version = gladLoadGL(glfwGetProcAddress);
+        if (!version) {
+            chk_warn("Win", "Failed to initialize OpenGL");
+            return false;
+        }
+
+        chk_info_f("Win", "Initialized OpenGL %d.%d for Win '%s'",
+                   GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version),
+                   c->caption);
     }
 
     glfwSetWindowUserPointer(w->impl, w);
@@ -151,6 +175,7 @@ bool chk_win_step(Win* w, bool process_events) {
         return false;
     }
 
+    if (w->state.uses_opengl) { glfwMakeContextCurrent(w->impl); }
     if (process_events) { glfwPollEvents(); }
 
     if (w->fn.on_update) { w->fn.on_update(w->data.dt, w->fn.user_ptr); }
@@ -164,6 +189,8 @@ bool chk_win_step(Win* w, bool process_events) {
     ++w->data.frame;
 
     w->changed = (WinChanged){};
+
+    if (w->state.uses_opengl) { glfwSwapBuffers(w->impl); }
 
     return true;
 }
@@ -227,6 +254,8 @@ void chk_win_cb_on_fb_size(GLFWwindow* _h, S32 x, S32 y) {
 
     w->data.fb_w = x, w->data.fb_h = y;
     w->changed.fb = true;
+
+    if (w->state.uses_opengl) { glViewport(0, 0, x, y); }
 }
 
 void chk_win_cb_on_dpi(GLFWwindow* _h, R32 x, R32 y) {

@@ -14,11 +14,13 @@ typedef struct WinConfig {
     S32         w, h;
     const char* caption;
     // Flags
-    B32         fullscreen : 1;
-    B32         maximized  : 1;
-    B32         minimized  : 1;
-    B32         resizable  : 1;
-    B32         bordered   : 1;
+    B32         fullscreen  : 1;
+    B32         maximized   : 1;
+    B32         minimized   : 1;
+    B32         resizable   : 1;
+    B32         bordered    : 1;
+    // Renderer
+    B32         uses_opengl : 1;
 } WinConfig;
 
 bool chk_win_config_get_default(WinConfig* c);
@@ -33,12 +35,14 @@ typedef struct WinData {
 } WinData;
 
 typedef struct WinState {
-    B32 running    : 1;
-    B32 fullscreen : 1;
-    B32 resizable  : 1;
-    B32 bordered   : 1;
-    B32 focused    : 1;
-    B32 hovered    : 1;
+    B32 running     : 1;
+    B32 fullscreen  : 1;
+    B32 resizable   : 1;
+    B32 bordered    : 1;
+    B32 focused     : 1;
+    B32 hovered     : 1;
+    // Renderer
+    B32 uses_opengl : 1;
 } WinState;
 
 typedef struct WinChanged {

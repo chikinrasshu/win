@@ -16,4 +16,4 @@ target_compile_features(chk_win PUBLIC c_std_11)
 target_include_directories(chk_win PUBLIC "include")
 
 target_link_libraries(chk_win PUBLIC chk::core)
-target_link_libraries(chk_win PRIVATE glfw::glfw)
+target_link_libraries(chk_win PRIVATE glfw::glfw optimized glad::gl debug glad::gl_d)
