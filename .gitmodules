@@ -1,0 +1,6 @@
+[submodule "external/chk_core"]
+	path = external/chk_core
+	url = https://github.com/chikinrasshu/core
+[submodule "external/glfw"]
+	path = external/glfw
+	url = https://github.com/glfw/glfw

@@ -1,0 +1,8 @@
+{
+    "editor.rulers": [
+        80
+    ],
+    "C_Cpp.formatting": "clangFormat",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true
+}

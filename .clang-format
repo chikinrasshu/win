@@ -1,0 +1,29 @@
+---
+BasedOnStyle: LLVM
+AccessModifierOffset: -4
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossComments: true
+AlignConsecutiveBitFields:
+  Enabled: true
+  AcrossComments: true
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossComments: true
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossComments: true
+AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortLoopsOnASingleLine: true
+ColumnLimit: 80
+IndentCaseLabels: true
+IndentWidth: 4
+InsertBraces: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+ObjCBlockIndentWidth: 4
+PointerAlignment: Left
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeInheritanceColon: false
+TabWidth: 4
