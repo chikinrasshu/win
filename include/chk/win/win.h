@@ -2,16 +2,26 @@
 
 #include <chk/core/types.h>
 
+#define CHK_WIN_ON_UPDATE(name) void name(R64 dt, void* user_ptr)
+#define CHK_WIN_ON_RENDER(name) void name(void* user_ptr)
+#define CHK_WIN_ON_DBG_UI(name) void name(void* user_ptr)
+typedef CHK_WIN_ON_UPDATE(WinFnOnUpdate);
+typedef CHK_WIN_ON_RENDER(WinFnOnRender);
+typedef CHK_WIN_ON_DBG_UI(WinFnOnDbgUI);
+
 typedef struct WinConfig {
+    // Data
     S32         w, h;
     const char* caption;
-
-    B32 fullscreen : 1;
-    B32 maximized  : 1;
-    B32 minimized  : 1;
-    B32 resizable  : 1;
-    B32 bordered   : 1;
+    // Flags
+    B32         fullscreen : 1;
+    B32         maximized  : 1;
+    B32         minimized  : 1;
+    B32         resizable  : 1;
+    B32         bordered   : 1;
 } WinConfig;
+
+bool chk_win_config_get_default(WinConfig* c);
 
 typedef struct WinData {
     S32 x, y;
@@ -42,10 +52,19 @@ typedef struct WinChanged {
     B32 hover      : 1;
 } WinChanged;
 
+typedef struct WinFn {
+    void* user_ptr;
+
+    WinFnOnUpdate* on_update;
+    WinFnOnRender* on_render;
+    WinFnOnDbgUI*  on_dbg_ui;
+} WinFn;
+
 typedef struct Win {
     WinData    data;
     WinState   state;
     WinChanged changed;
+    WinFn      fn;
 
     void* impl;
     void* impl_ex;

@@ -19,6 +19,30 @@ void chk_win_cb_on_focus(GLFWwindow* _h, B32 v);
 void chk_win_cb_on_hover(GLFWwindow* _h, B32 v);
 
 /******************************************************************************/
+/* WinConfig impl                                                             */
+/******************************************************************************/
+
+bool chk_win_config_get_default(WinConfig* c) {
+    if (!c) {
+        chk_warn("WinConfig", "c was NULL");
+        return false;
+    }
+
+    // Data
+    c->w          = 800;
+    c->h          = 600;
+    c->caption    = "chk_win";
+    // Flags
+    c->fullscreen = false;
+    c->maximized  = false;
+    c->minimized  = false;
+    c->resizable  = true;
+    c->bordered   = true;
+
+    return true;
+}
+
+/******************************************************************************/
 /* Win impl                                                                   */
 /******************************************************************************/
 
@@ -49,7 +73,11 @@ bool chk_win_create(Win* w, WinConfig c) {
         S32           monitor_count;
         GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
 
-        for (S32 monitor_i = 0; monitor_i < monitor_count; ++monitor_i) {}
+        monitor = glfwGetPrimaryMonitor();
+
+        for (S32 monitor_i = 0; monitor_i < monitor_count; ++monitor_i) {
+            //
+        }
     }
 
     w->impl = glfwCreateWindow(c.w, c.h, c.caption, monitor, NULL);
@@ -125,9 +153,15 @@ bool chk_win_step(Win* w, bool process_events) {
 
     if (process_events) { glfwPollEvents(); }
 
+    if (w->fn.on_update) { w->fn.on_update(w->data.dt, w->fn.user_ptr); }
+    if (w->fn.on_render) { w->fn.on_render(w->fn.user_ptr); }
+    if (w->fn.on_dbg_ui) { w->fn.on_dbg_ui(w->fn.user_ptr); }
+
     R64 ct     = glfwGetTime();
     w->data.dt = ct - w->data.et;
     w->data.et = ct;
+
+    w->changed = (WinChanged){};
 
     return true;
 }
@@ -146,6 +180,7 @@ void chk_win_cb_on_close(GLFWwindow* _h) {
         chk_warn("Win", "w was NULL");
         return;
     }
+
     w->state.running = false;
 }
 
@@ -155,6 +190,7 @@ void chk_win_cb_on_refresh(GLFWwindow* _h) {
         chk_warn("Win", "w was NULL");
         return;
     }
+
     chk_win_step(w, false);
 }
 
@@ -164,6 +200,7 @@ void chk_win_cb_on_pos(GLFWwindow* _h, S32 x, S32 y) {
         chk_warn("Win", "w was NULL");
         return;
     }
+
     w->data.x = x, w->data.y = y;
     w->changed.pos = true;
 }
@@ -174,6 +211,7 @@ void chk_win_cb_on_size(GLFWwindow* _h, S32 x, S32 y) {
         chk_warn("Win", "w was NULL");
         return;
     }
+
     w->data.w = x, w->data.h = y;
     w->changed.size = true;
 }
@@ -184,6 +222,7 @@ void chk_win_cb_on_fb_size(GLFWwindow* _h, S32 x, S32 y) {
         chk_warn("Win", "w was NULL");
         return;
     }
+
     w->data.fb_w = x, w->data.fb_h = y;
     w->changed.fb = true;
 }
@@ -194,6 +233,7 @@ void chk_win_cb_on_dpi(GLFWwindow* _h, R32 x, R32 y) {
         chk_warn("Win", "w was NULL");
         return;
     }
+
     w->data.dpi_x = x, w->data.dpi_y = y;
     w->changed.dpi = true;
 }
@@ -204,6 +244,7 @@ void chk_win_cb_on_focus(GLFWwindow* _h, B32 v) {
         chk_warn("Win", "w was NULL");
         return;
     }
+
     w->state.focused = !!v;
     w->changed.focus = true;
 }
@@ -214,6 +255,7 @@ void chk_win_cb_on_hover(GLFWwindow* _h, B32 v) {
         chk_warn("Win", "w was NULL");
         return;
     }
+
     w->state.hovered = !!v;
     w->changed.hover = true;
 }
