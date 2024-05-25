@@ -1,4 +1,6 @@
-add_subdirectory("chk_core")
+if (NOT TARGET chk_core)
+    add_subdirectory("chk_core")
+endif()
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "")
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "")
