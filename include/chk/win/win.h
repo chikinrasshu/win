@@ -29,6 +29,7 @@ typedef struct WinData {
     S32 fb_w, fb_h;
     R32 dpi_x, dpi_y;
     R64 et, dt;
+    U64 frame;
 } WinData;
 
 typedef struct WinState {

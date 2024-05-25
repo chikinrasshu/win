@@ -161,6 +161,8 @@ bool chk_win_step(Win* w, bool process_events) {
     w->data.dt = ct - w->data.et;
     w->data.et = ct;
 
+    ++w->data.frame;
+
     w->changed = (WinChanged){};
 
     return true;
