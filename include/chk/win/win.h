@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chk/core/rect.h>
 #include <chk/core/types.h>
 
 #define CHK_WIN_ON_UPDATE(name) void name(R64 dt, void* user_ptr)
@@ -11,7 +12,7 @@ typedef CHK_WIN_ON_DBG_UI(WinFnOnDbgUI);
 
 typedef struct WinConfig {
     // Data
-    S32         w, h;
+    V2_s        size;
     const char* caption;
     // Flags
     B32         fullscreen  : 1;
@@ -26,12 +27,11 @@ typedef struct WinConfig {
 bool chk_win_config_get_default(WinConfig* c);
 
 typedef struct WinData {
-    S32 x, y;
-    S32 w, h;
-    S32 fb_w, fb_h;
-    R32 dpi_x, dpi_y;
-    R64 et, dt;
-    U64 frame;
+    Rect_s rect;
+    V2_s   fb;
+    V2_f   dpi;
+    R64    et, dt;
+    U64    frame;
 } WinData;
 
 typedef struct WinState {

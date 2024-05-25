@@ -30,8 +30,8 @@ bool chk_win_config_get_default(WinConfig* c) {
     }
 
     // Data
-    c->w          = 800;
-    c->h          = 600;
+    c->size.w     = 800;
+    c->size.h     = 600;
     c->caption    = "chk_win";
     // Flags
     c->fullscreen = false;
@@ -91,7 +91,7 @@ bool chk_win_create(Win* w, WinConfig* c) {
         }
     }
 
-    w->impl = glfwCreateWindow(c->w, c->h, c->caption, monitor, NULL);
+    w->impl = glfwCreateWindow(c->size.w, c->size.h, c->caption, monitor, NULL);
     if (!w->impl) {
         chk_warn_f("Win", "Failed to create the Win '%s'", c->caption);
         return false;
@@ -120,10 +120,10 @@ bool chk_win_create(Win* w, WinConfig* c) {
     glfwSetWindowFocusCallback(w->impl, chk_win_cb_on_focus);
     glfwSetCursorEnterCallback(w->impl, chk_win_cb_on_hover);
 
-    glfwGetWindowPos(w->impl, &w->data.x, &w->data.y);
-    glfwGetWindowSize(w->impl, &w->data.w, &w->data.h);
-    glfwGetFramebufferSize(w->impl, &w->data.fb_w, &w->data.fb_h);
-    glfwGetWindowContentScale(w->impl, &w->data.dpi_x, &w->data.dpi_y);
+    glfwGetWindowPos(w->impl, &w->data.rect.x, &w->data.rect.y);
+    glfwGetWindowSize(w->impl, &w->data.rect.w, &w->data.rect.h);
+    glfwGetFramebufferSize(w->impl, &w->data.fb.w, &w->data.fb.h);
+    glfwGetWindowContentScale(w->impl, &w->data.dpi.x, &w->data.dpi.y);
 
     glfwShowWindow(w->impl);
     w->state.running = true;
@@ -230,7 +230,7 @@ void chk_win_cb_on_pos(GLFWwindow* _h, S32 x, S32 y) {
         return;
     }
 
-    w->data.x = x, w->data.y = y;
+    w->data.rect.x = x, w->data.rect.y = y;
     w->changed.pos = true;
 }
 
@@ -241,7 +241,7 @@ void chk_win_cb_on_size(GLFWwindow* _h, S32 x, S32 y) {
         return;
     }
 
-    w->data.w = x, w->data.h = y;
+    w->data.rect.w = x, w->data.rect.h = y;
     w->changed.size = true;
 }
 
@@ -252,7 +252,7 @@ void chk_win_cb_on_fb_size(GLFWwindow* _h, S32 x, S32 y) {
         return;
     }
 
-    w->data.fb_w = x, w->data.fb_h = y;
+    w->data.fb.w = x, w->data.fb.h = y;
     w->changed.fb = true;
 
     if (w->state.uses_opengl) { glViewport(0, 0, x, y); }
@@ -265,7 +265,7 @@ void chk_win_cb_on_dpi(GLFWwindow* _h, R32 x, R32 y) {
         return;
     }
 
-    w->data.dpi_x = x, w->data.dpi_y = y;
+    w->data.dpi.x = x, w->data.dpi.y = y;
     w->changed.dpi = true;
 }
 
