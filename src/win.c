@@ -48,7 +48,7 @@ bool chk_win_config_get_default(WinConfig* c) {
 
 static S32 g_win_count = 0;
 
-bool chk_win_create(Win* w, WinConfig c) {
+bool chk_win_create(Win* w, WinConfig* c) {
     if (!w) {
         chk_warn("Win", "w was NULL");
         return false;
@@ -63,12 +63,12 @@ bool chk_win_create(Win* w, WinConfig c) {
     }
     ++g_win_count;
 
-    glfwWindowHint(GLFW_RESIZABLE, c.resizable);
-    glfwWindowHint(GLFW_DECORATED, c.bordered);
+    glfwWindowHint(GLFW_RESIZABLE, c->resizable);
+    glfwWindowHint(GLFW_DECORATED, c->bordered);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     GLFWmonitor* monitor = NULL;
-    if (c.fullscreen) {
+    if (c->fullscreen) {
         // Get the monitor under the cursor
         S32           monitor_count;
         GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
@@ -80,9 +80,9 @@ bool chk_win_create(Win* w, WinConfig c) {
         }
     }
 
-    w->impl = glfwCreateWindow(c.w, c.h, c.caption, monitor, NULL);
+    w->impl = glfwCreateWindow(c->w, c->h, c->caption, monitor, NULL);
     if (!w->impl) {
-        chk_warn_f("Win", "Failed to create the Win '%s'", c.caption);
+        chk_warn_f("Win", "Failed to create the Win '%s'", c->caption);
         return false;
     }
 
@@ -104,7 +104,7 @@ bool chk_win_create(Win* w, WinConfig c) {
     glfwShowWindow(w->impl);
     w->state.running = true;
 
-    chk_info_f("Win", "Created Win '%s'", c.caption);
+    chk_info_f("Win", "Created Win '%s'", c->caption);
 
     return true;
 }

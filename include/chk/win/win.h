@@ -70,7 +70,7 @@ typedef struct Win {
     void* impl_ex;
 } Win;
 
-bool chk_win_create(Win* w, WinConfig c);
+bool chk_win_create(Win* w, WinConfig* c);
 bool chk_win_destroy(Win* w);
 
 bool chk_win_run(Win* w);
