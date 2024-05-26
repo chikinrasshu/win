@@ -41,6 +41,7 @@ typedef struct WinState {
     B32 bordered    : 1;
     B32 focused     : 1;
     B32 hovered     : 1;
+    B32 dark        : 1;
     // Renderer
     B32 uses_opengl : 1;
 } WinState;
@@ -55,6 +56,7 @@ typedef struct WinChanged {
     B32 fullscreen : 1;
     B32 focus      : 1;
     B32 hover      : 1;
+    B32 dark       : 1;
 } WinChanged;
 
 typedef struct WinFn {

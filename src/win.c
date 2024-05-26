@@ -5,6 +5,10 @@
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
 
+#if _WIN32
+#include <chk/win/win32/win.h>
+#endif
+
 /******************************************************************************/
 /* Callbacks Fwd                                                              */
 /******************************************************************************/
@@ -91,11 +95,19 @@ bool chk_win_create(Win* w, WinConfig* c) {
         }
     }
 
+#if _WIN32
+    chk_win_win32_create_pre(w, c);
+#endif
+
     w->impl = glfwCreateWindow(c->size.w, c->size.h, c->caption, monitor, NULL);
     if (!w->impl) {
         chk_warn_f("Win", "Failed to create the Win '%s'", c->caption);
         return false;
     }
+
+#if _WIN32
+    chk_win_win32_create_post(w, c);
+#endif
 
     if (w->state.uses_opengl) {
         glfwMakeContextCurrent(w->impl);
@@ -138,6 +150,10 @@ bool chk_win_destroy(Win* w) {
         chk_warn("Win", "w was NULL");
         return false;
     }
+
+#if _WIN32
+    chk_win_win32_destroy(w);
+#endif
 
     glfwDestroyWindow(w->impl);
     w->impl = NULL;
