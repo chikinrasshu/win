@@ -96,7 +96,7 @@ bool chk_win_create(Win* w, WinConfig* c) {
     }
 
 #if _WIN32
-    chk_win_win32_create_pre(w, c);
+    if (!chk_win_win32_create_pre(w, c)) { return false; }
 #endif
 
     w->impl = glfwCreateWindow(c->size.w, c->size.h, c->caption, monitor, NULL);
@@ -104,10 +104,6 @@ bool chk_win_create(Win* w, WinConfig* c) {
         chk_warn_f("Win", "Failed to create the Win '%s'", c->caption);
         return false;
     }
-
-#if _WIN32
-    chk_win_win32_create_post(w, c);
-#endif
 
     if (w->state.uses_opengl) {
         glfwMakeContextCurrent(w->impl);
@@ -137,6 +133,10 @@ bool chk_win_create(Win* w, WinConfig* c) {
     glfwGetFramebufferSize(w->impl, &w->data.fb.w, &w->data.fb.h);
     glfwGetWindowContentScale(w->impl, &w->data.dpi.x, &w->data.dpi.y);
 
+#if _WIN32
+    if (!chk_win_win32_create_post(w, c)) { return false; }
+#endif
+
     glfwShowWindow(w->impl);
     w->state.running = true;
 
@@ -151,8 +151,10 @@ bool chk_win_destroy(Win* w) {
         return false;
     }
 
+    bool result = true;
+
 #if _WIN32
-    chk_win_win32_destroy(w);
+    result |= chk_win_win32_destroy(w);
 #endif
 
     glfwDestroyWindow(w->impl);
@@ -166,7 +168,7 @@ bool chk_win_destroy(Win* w) {
         glfwTerminate();
     }
 
-    return true;
+    return result;
 }
 
 bool chk_win_run(Win* w) {

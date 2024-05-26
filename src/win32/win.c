@@ -49,13 +49,10 @@ bool chk_win_win32_update_theme(HWND handle) {
 
     // Update the Win darkmode flag
     chk_info("Win<Win32>", "Updating theme...");
-    GLFWwindow* _h = (GLFWwindow*)GetWindowLongPtr(handle, GWLP_USERDATA);
-    if (_h) {
-        Win* w = glfwGetWindowUserPointer(_h);
-        if (w) {
-            w->state.dark   = is_dark;
-            w->changed.dark = true;
-        }
+    Win* w = (Win*)GetWindowLongPtr(handle, GWLP_USERDATA);
+    if (w) {
+        w->state.dark   = is_dark;
+        w->changed.dark = true;
     }
 
     return true;
@@ -69,8 +66,9 @@ CALLBACK LRESULT chk_win_win32_custom_proc(HWND handle, UINT msg, WPARAM wp,
     switch (msg) {
         case WM_SETTINGCHANGE: {
             LPCTSTR key = (LPCTSTR)lp;
+
             if (key) {
-                if (_tcscmp(key, _T("ImmersiveColorSet"))) {
+                if (_tcscmp(key, _T("ImmersiveColorSet")) == 0) {
                     chk_win_win32_update_theme(handle);
                 }
             }

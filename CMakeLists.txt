@@ -24,5 +24,5 @@ target_link_libraries(chk_win PUBLIC chk::core)
 target_link_libraries(chk_win PRIVATE glfw::glfw optimized glad::gl debug glad::gl_d)
 
 if (WIN32)
-    target_compile_definitions(chk_win PUBLIC "-DUNICODE=1 -D_UNICODE=1")
+    target_compile_definitions(chk_win PUBLIC "UNICODE" "_UNICODE")
 endif()
